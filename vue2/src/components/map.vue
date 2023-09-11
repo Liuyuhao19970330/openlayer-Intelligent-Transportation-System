@@ -8,12 +8,17 @@
     <Roadinfo :map="map"  ref="roadinfoComponentRef"  />
     <Reportroadinfo :map="map"  ref="reportroadinfoComponentRef"  />
     <Eventinfo :map="map"  ref="eventinfoComponentRef"  />
-    <ChangePassword   ref="changepasswordComponentRef"  />
-    <Admin   ref="adminComponentRef"  />
+    <ChangePassword  ref="changepasswordComponentRef"  />
+    <Admin  ref="adminComponentRef"  />
+    <Traffic :map="map" ref="trafficComponentRef"  />
     <div class="navbar-container">
       <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal"  style="display:flex" >
         <el-menu-item index="3" disabled class="logo" style="color:red; margin-left:100px;margin-right:35px;">光谷智慧交通系统111111111111</el-menu-item>
-        <el-menu-item index="1" @click="handleClick1()" >实时路况</el-menu-item>
+        <el-submenu index="1" style="margin-left:5px">
+          <template slot="title" >实时路况</template>
+          <el-menu-item index="1-1" style="margin-left:20%" @click="traffic_on" >开启实时路况</el-menu-item>
+          <el-menu-item index="1-2" style="margin-left:20%" @click="traffic_off">关闭实时路况</el-menu-item>
+        </el-submenu>
         <el-menu-item index="2" @click="handleClick5()" >路况情况</el-menu-item>
         <el-menu-item index="3" @click="handleClick()" >发布公告</el-menu-item>
         <el-submenu index="4" style="margin-left:5px">
@@ -22,8 +27,17 @@
           <el-menu-item index="2-2" style="margin-left:20%" @click="handleQueryCameraVecLayer1">关闭视频监控</el-menu-item>
         </el-submenu>
         <el-menu-item index="5"  @click="handleQueryCameraVecLayer1" >事件添加</el-menu-item>  
-        <el-menu-item index="6" @click="handleQueryCameraVecLayer2" >事件更新</el-menu-item>
-        <el-menu-item index="7"  @click="handleQueryCameraVecLayer3"  >事件查询</el-menu-item>
+        <el-submenu index="6" style="margin-left:5px">
+          <template slot="title" >事件更新</template>
+          <el-menu-item index="6-1" style="margin-left:20%" @click="Updates_on" >开启事件更新</el-menu-item>
+          <el-menu-item index="6-2" style="margin-left:20%" @click="Updates_off">关闭事件更新</el-menu-item>
+        </el-submenu>
+        <!-- <el-menu-item index="7"    >事件查询</el-menu-item> -->
+        <el-submenu index="7" style="margin-left:5px">
+          <template slot="title" >事件查询</template>
+          <el-menu-item index="7-1" style="margin-left:20%" @click="Search_on" >开启事件查询</el-menu-item>
+          <el-menu-item index="7-2" style="margin-left:20%" @click="Search_off">关闭事件查询</el-menu-item>
+        </el-submenu>
         <el-menu-item index="8"  @click="handleQueryCameraVecLayer4"  >事件信息</el-menu-item>
         <el-submenu index="8" style="margin-left:5px;">
           <template slot="title" >工具箱</template>
@@ -106,6 +120,7 @@ import Eventinfo from '../views/Eventinfo.vue'
 import ChangePassword from '../views/ChangePassword.vue'
 import { bus } from '../main';
 import Admin from '../views/Admin.vue'
+import Traffic from '../views/Traffic.vue'
 export default {
   components: {
     Measure,
@@ -117,7 +132,8 @@ export default {
     Reportroadinfo,
     Eventinfo,
     ChangePassword,
-    Admin
+    Admin,
+    Traffic
   },
   data() {
     return {
@@ -125,16 +141,17 @@ export default {
     activeIndex: '1',
     input3:'',
     map:null,
+    is_flowLayer:false,
     flowLayer:null,
     searchLayer:null,
     popupTitle: '',
       popupContent: '',
       Visiable:false,
       draw:null,
-      abc:null,
+      Traffic:null,
       op:null,
       selectedImage: 'dog',
-      receivedData:'',
+      x_username:'',
       form1:{},
     inputs: [
       { name: '居民区', checked: true },
@@ -150,12 +167,11 @@ export default {
   },
   created() {
     bus.$on('data-event', (data) => {
-      this.receivedData = data;
+      this.x_username = data;
     });
   },
   mounted() {
     this.initMap();
-  
   },
     //this.initDrawingInteraction(); // 初始化绘制交互
   methods: {
@@ -302,65 +318,6 @@ export default {
   }
 },
 
-    handleClick1() {
-  queryByLayer();
-  const ol_features1 = [];
-  const ol_features2 = [];
-  const ol_features3 = [];
-
-  abc.forEach(function(feature) {
-    const bcd = parseInt(feature.values_.values_.车流量);
-    
-    if (bcd > 0 && bcd <= 1000) {
-      ol_features1.push(feature);
-    } else if (bcd > 1000 && bcd <= 1500) {
-      ol_features2.push(feature);
-    } else if (bcd > 1500 && bcd <= 2000) {
-      ol_features3.push(feature);
-    }
-
-  });
-  
-  const style1 = new Style({
-    stroke: new StyleStroke({
-      color: "rgb(178,34,34)",
-      width: 6
-    })
-  });
-  
-  const style2 = new Style({
-    stroke: new StyleStroke({
-      color: "rgb(34,139,34)",
-      width: 6
-    })
-  });
-  
-  const style3 = new Style({
-    stroke: new StyleStroke({
-      color: "rgb(255,127,36)",
-      width: 6
-    })
-  });
-  
-
-
-  const source1 = new VectorSource({ wrapX: false, features: ol_features1 });
-  const source2 = new VectorSource({ wrapX: false, features: ol_features2 });
-  const source3 = new VectorSource({ wrapX: false, features: ol_features3 });
-  
-  const flowLayer1 = new VectorLayer({ source: source1, style: style1 });
-  const flowLayer2 = new VectorLayer({ source: source2, style: style2 });
-  const flowLayer3 = new VectorLayer({ source: source3, style: style3 });
-  
-  this.flowLayer = new Group({
-        layers: [
-          flowLayer1,
-          flowLayer2,
-          flowLayer3
-        ],
-    });
-  this.map.addLayer(this.flowLayer)
-},
 async handleInput(){
   if(this.input3 === ''){
     this.$message.error('请输入内容');
@@ -406,18 +363,22 @@ handleQueryCameraVecLayer1() {
 handleClick(){
   this.$refs.publishComponentRef.Draw();
         },
-handleQueryCameraVecLayer2(){
+Updates_on(){
   this.$refs.addeventComponentRef.Draw();
 },
- handleQueryCameraVecLayer3(){
-  
+Updates_off(){
+  this.$refs.addeventComponentRef.close()
+},
+Search_on(){
   this.$refs.eventqueryComponentRef.Draw();
   
 },
+Search_off(){
+  this.$refs.eventqueryComponentRef.close();
+  
+},
 handleClick5(){
-  
-  this.$refs.reportroadinfoComponentRef.RoadInfoTableInit();
-  
+  this.$refs.reportroadinfoComponentRef.RoadInfoTableInit(this.x_username);
 } ,
 handleQueryCameraVecLayer4(){
   this.$refs.eventinfoComponentRef.ShowDiv();
@@ -426,7 +387,7 @@ changePassword(){
   this.$refs.changepasswordComponentRef.changePassword();
 },
 async logout(){
-  await this.$post('http://localhost:8000/api/loginout',this.receivedData).then(resp=>{
+  await this.$post('http://localhost:8000/api/loginout',this.x_username).then(resp=>{
     if(resp.code===0){
             this.$message({
               message:'成功登出',
@@ -446,7 +407,13 @@ async logout(){
 },
 AdminData(){
   this.$refs.adminComponentRef.Admin();
-}
+},
+traffic_on(){
+  this.$refs.trafficComponentRef.flow();
+},
+traffic_off(){
+  this.$refs.trafficComponentRef.close();
+},
   }
 }
 </script>

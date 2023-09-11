@@ -55,8 +55,8 @@ export default {
           username: '',
           password: '',
           type:'common',
-          x_username:''
-        }
+        },
+        x_username:''
       }
     },
     mounted() {

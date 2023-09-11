@@ -31,6 +31,7 @@
                 this.draw.on('drawend', async e=>{ await addFeatureCallback(e);
                     var container = document.getElementById("popup");
                     var closer = document.getElementById("popup-closer");
+                    var btn_cancel = document.getElementById("btn-cancel");
                     var overlay = new Overlay({
                         element: container,
                         autoPan: true,
@@ -40,15 +41,25 @@
                     });
                     this.map.addOverlay(overlay);
                     overlay.setPosition(e.feature.getGeometry().getCoordinates());
-                    
-                    closer.onclick = function() {
+                    closer.onclick = () => {
                         overlay.setPosition(undefined);
                         closer.blur();
                         return false;
-                    };});
+                    };
+                    btn_cancel.onclick = () => {
+                        overlay.setPosition(undefined);
+                        btn_cancel.blur();
+                        return false;
+                    };
+                });
             }                                    
  },
-
+ close() {
+  if (this.draw) {
+    this.map.removeInteraction(this.draw);
+    this.draw = null;
+  }
+}
 }
 }
  </script>
@@ -104,4 +115,5 @@
  .ol-popup-closer:after {
      content: "✖";
  }
+
  </style>

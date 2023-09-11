@@ -1,6 +1,6 @@
 <template>
-   <div id="popup" class="ol-popup">
-        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+   <div  id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer" ></a>
         <div id="popup-content" class="popup-content"></div>
     </div>
 </template>
@@ -18,11 +18,15 @@ export default {
   data(){
     return{
         imgUrl:require("../assets/images/mark.jpg"), //vue2加载图片要用请求的方式来访问相对路径;
-        layer:null
+        layer:null,
+        is_addLayer:false
     }
   },
   methods:{
     async popup(){
+      if(this.is_addLayer == true){
+        return
+      }
       const style = new Style({
             //形状
             image: new StyleIcon({
@@ -49,7 +53,7 @@ export default {
             source,
             style
         })
-      this.map.addLayer(this.layer);
+        this.map.addLayer(this.layer)
         var container = document.getElementById('popup');
         var content = document.getElementById('popup-content');
         var closer = document.getElementById('popup-closer');
@@ -65,7 +69,7 @@ export default {
                     duration: 250
                 }
             }));
-        this.map.addOverlay(this.overlay);   
+        this.map.addOverlay(this.overlay);  
         this.map.on('pointermove',  (e)=> {
             var pixel = this.map.getEventPixel(e.originalEvent);
             var hit = this.map.hasFeatureAtPixel(pixel);
@@ -105,27 +109,21 @@ export default {
                 <p> 位置：${name}</p>`;
                 _that.overlay.setPosition(evt.coordinate); //把 overlay 显示到指定的 x,y坐标
         });
-
         var closer = document.getElementById("popup-closer");
-            closer.onclick = ()=>{
-            _that.overlay.setPosition(undefined);
-            closer.blur();
-            return false;
+            closer.onclick = () => {
+                _that.overlay.setPosition(undefined);
+                closer.blur();
+                return false;
             };
-
-        // closer.onclick =  ()=> {
-        //     //未定义popup位置
-        //     popup.setPosition(undefined);
-        //     //失去焦点
-        //     closer.blur();
-        //     return false;
-        // };
+        this.is_addLayer = true
+      
     },
+
     cleanPopup(){
         this.map.removeLayer(this.layer);
+        this.is_addLayer = false
     },
     mounted() {
-        this.Popup();
     }
   }
 }

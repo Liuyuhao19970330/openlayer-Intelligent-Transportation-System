@@ -5,6 +5,11 @@ const seq = require('../db/seq')
 // 创建模型(Model zd_user -> 表 zd_users)
 const User = seq.define('report', {
   // id 会被sequelize自动创建, 管理
+  x_username:{
+    type: DataTypes.CHAR(16),
+    allowNull: true,
+    comment: '用户名',
+  },
   type: {
     type: DataTypes.CHAR(10),
     allowNull: true,
@@ -21,12 +26,12 @@ const User = seq.define('report', {
     comment: '附近建筑',
   },
   date1: {
-    type: DataTypes.CHAR(64),
+    type: DataTypes.DATE(64),
     allowNull: true,
     comment: '日期',
   },
   date2: {
-    type: DataTypes.CHAR(64),
+    type: DataTypes.TIME(64),
     allowNull: true,
     comment: '时间',
   },

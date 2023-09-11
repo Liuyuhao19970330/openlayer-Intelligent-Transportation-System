@@ -3,9 +3,9 @@ const User1 = require('../model/user model1')
 const { Op } = require('sequelize');
 
 class UserService {
-    async createRoad(type,address, building,date1,date2,description) {
+    async createRoad(type,address, building,date1,date2,description,x_username) {
       // todo: 写入数据库
-      const res = await User.create({ type,address, building,date1,date2,description })
+      const res = await User.create({ type,address, building,date1,date2,description,x_username })
       console.log(res)
       return res.dataValues
     }
@@ -33,9 +33,10 @@ class UserService {
     }
     async userFind(key) {
       const results = await User.findAll({
-        attributes: ['type', 'address', 'building', 'date1', 'date2', 'description'],
+        attributes: ['type', 'address', 'building', 'date1', 'date2', 'description','x_username'],
         where: {
           [Op.or]: [
+            { x_username: { [Op.like]: `%${key}%` } },
             { type: { [Op.like]: `%${key}%` } },
             { address: { [Op.like]: `%${key}%` } },
             { building: { [Op.like]: `%${key}%` } },

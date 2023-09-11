@@ -31,6 +31,7 @@
         }
         // 车流量的feature↓↓
          function queryByLayer() {
+            return new Promise(function(resolve, reject) {
             //初始化查询结构对象，设置查询结构包含几何信息
             var queryStruct = new Zondy.Service.QueryFeatureStruct();
             //是否包含几何图形信息
@@ -67,13 +68,12 @@
             });
 
             //执行查询操作，querySuccess为查询回调函数
-           queryService.query(querySuccess);
-        }
-        
-        function querySuccess(result) {
+           queryService.query((e)=>{
             var format = new Zondy.Format.PolygonJSON();//反序转化
-            var ol_features = format.read(result);
-            abc = ol_features
+            var ol_features = format.read(e);
+            resolve(ol_features);
+        });
+    })
         }
 
 
@@ -108,7 +108,6 @@
                 });
             });
         }
-    queryByLayer()
        // 查询摄像头的feature↓↓  
     function videoLayer() {
         return new Promise(function(resolve, reject) {
@@ -284,7 +283,7 @@
             }
             $("#popup-title").html("添加事件");
             $("#popup-content")[0].innerHTML = "<div class='tb-event'><table class='table table-bordered'>" + trs + "</table></div>" +
-                "<div class='btn-event'><button class='btn btn-primary btn-sm mr5' onclick='creatFeature(" + position[0] + "," + position[1] + ")'>提交</button><button class='btn btn-default btn-sm ml5' onclick='cancleFeature()'>取消</button></div>";
+                "<div class='btn-event'><button class='btn btn-primary btn-sm mr5' onclick='creatFeature(" + position[0] + "," + position[1] + ")'>提交</button><button id='btn-cancel' class='btn btn-default btn-sm ml5 btn-primary-border'  >取消</button></div>";
             $(".event-type option[value='"+eventAdd.type+"']").prop("selected", true);
                 resolve(result);
                 });
@@ -455,10 +454,6 @@
     })
     
 }
-
-
-
-
     function bufferSuccess(result) {
         var clspath = result.results[0].Value;
         //实例化ClipByLayer类

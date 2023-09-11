@@ -20,7 +20,6 @@
         <el-form-item label="建筑标识">
             <el-input v-model="form.building" placeholder="请输入事故最近的建筑标识"></el-input>
         </el-form-item>
-
         <el-form-item label="发生时间">
             <el-col :span="11">
             <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
@@ -57,11 +56,14 @@ export default {
         },
         visiable : false,
         showDiv:false,
+        x_username:''
       }
     },
     methods: {
-      RoadInfoTableInit(){
+      RoadInfoTableInit(e){
         this.showDiv = true
+        this.$set(this.form, 'x_username', e);
+        console.log(this.form)
       },
       onSubmit() {
         const date = new Date(this.form.date1);

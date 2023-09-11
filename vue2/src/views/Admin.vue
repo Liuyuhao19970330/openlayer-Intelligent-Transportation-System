@@ -37,8 +37,7 @@
         <template slot-scope="scope">
           <el-button @click="modify(scope.row)">修改</el-button>
           <el-button @click="handleDelete(scope.row)">删除</el-button>
-          
-          <el-button v-if="scope.row.is_online === '在线'" @click="offline">下线</el-button>
+          <el-button v-if="scope.row.is_online === '在线'" @click="offline(scope.row)">下线</el-button>
         </template>
       </el-table-column>
     </el-table>   
@@ -87,7 +86,8 @@ export default {
           type: '',
           oldUsername:''
         },
-        old:null
+        old:null,
+        offLine:''
     }
   },
   methods:{
@@ -156,8 +156,7 @@ export default {
     }
   },
  async offline(e){
-    const username = e.username
-    await this.$post('http://localhost:8000/api/loginout',username).then(resp=>{
+    await this.$post('http://localhost:8000/api/loginout',e.username).then(resp=>{
     if(resp.code===0){
             this.$message({
               message:'操作成功',

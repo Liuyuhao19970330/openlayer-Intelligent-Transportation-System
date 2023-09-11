@@ -6,9 +6,9 @@ class UserController {
   async road(ctx, next) {
     try {
   
-      const { type, address, building, date1, date2, description } = ctx.request.body
+      const { type, address, building, date1, date2, description,x_username } = ctx.request.body
       // 调用数据库操作
-      const res = await createRoad(type, address, building, date1, date2, description)
+      const res = await createRoad(type, address, building, date1, date2, description,x_username)
   
       // 数据库操作成功
       ctx.body = {
@@ -135,6 +135,7 @@ class UserController {
     }
   }
   async loginOut(ctx, next) {
+    console.log(ctx.request.body,'123')
     const requestBody = ctx.request.body;
     const key = Object.keys(requestBody)[0];
     console.log(key)

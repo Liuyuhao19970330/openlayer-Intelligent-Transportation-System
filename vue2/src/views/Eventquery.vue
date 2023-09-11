@@ -8,11 +8,14 @@
         <div id="resulttable"></div> 
     </div>
     <div id="mapchart" style="display: none;">
-        <div style ="position:relative;display: flex;align-items: center;justify-content: center;margin:10px" >事件统计图</div>
+        <div style ="position:relative;display: flex;align-items: center;justify-content: center;margin:10px" >事件统计图
+            <div style="position:absolute;right:2px;top:1px" @click="toggleChart"><svg t="1693452797521" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1763" width="24" height="24"><path d="M0 0h1024v1024H0z" fill="#d81e06" fill-opacity="0" p-id="1764"></path><path d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z" fill="#d81e06" p-id="1765"></path></svg></div>
+        </div>
         <hr style="margin:7px">
-        <div style="padding-bottom: 8px;position:relative;left:5%">
+        <div style="padding-bottom: 8px;position:relative;left:5%;display:flex;width:100%">
             <el-button style="left:20px" @click="L123()">按月份统计</el-button>
             <el-button @click="L1234()">按类型统计</el-button>
+            
         </div>
         <div id="char-content" ></div>
     </div>
@@ -35,16 +38,26 @@ import Heatmap from 'ol/layer/Heatmap';
      return{
         result:null,
         imgUrl:require("../assets/images/a1.jpeg"),
+        isChartVisible: true,
         myChart:null,
         optionForMonth:null,
         optionForType:null,
         typeArray:[],
+        heatmapLayer:null,
+        ciecleVector:null,
+        is_Heatmap:false
      }                   
    },
    mounted(){
-    
+    this.toggleChart();
    },
    methods:{
+    toggleChart() {
+    
+    document.getElementById('mapchart').style.display = 'none';
+    
+  },
+
     creatJsonInfo(FldName, AttValue) {
     const jsonInfo = { FldName, AttValue };
     
@@ -85,7 +98,7 @@ import Heatmap from 'ol/layer/Heatmap';
                     if (labelSource == null) {
                         //矢量标注的数据源
                         labelSource = new VectorSource();
-                        var ciecleVector = new VectorLayer({
+                        this.ciecleVector = new VectorLayer({
                             source: labelSource,
                             style: new Style({
                                 //填充色
@@ -99,7 +112,7 @@ import Heatmap from 'ol/layer/Heatmap';
                                 })
                             })
                         });
-                        this.map.addLayer(ciecleVector);
+                        this.map.addLayer(this.ciecleVector);
                     }
                     var features = [];
                     var tbody = "";
@@ -109,7 +122,6 @@ import Heatmap from 'ol/layer/Heatmap';
                         if (bound != undefined) {
                             var labelposition = [(bound.xmin + bound.xmax) / 2, (bound.ymin + bound.ymax) / 2];
                             var infojson = this.creatJsonInfo(this.result.AttStruct.FldName, sfele.AttValue);
-                            console.log(sfele.AttValue)
                             var tds = "";
                             for (var j = 0; j < sfele.AttValue.length - 1; j++) {
                                 var value = sfele.AttValue[j];
@@ -159,16 +171,21 @@ import Heatmap from 'ol/layer/Heatmap';
                         $("#divShowResult").show();
                     // }
                     labelSource.addFeatures(features);
-                    this.map.un("click", ()=>{console.log('map.un')});
-                    this.map.on("click", ()=>{console.log('map.on')});
+                    this.map.un("click", ()=>{});
+                    this.map.on("click", ()=>{
+                    this.map.removeLayer(this.ciecleVector);
+                });
                 })
             }else {
         openMessage("danger", "哎呀！", "没有查询到内容");
     }
         },
     handclick1(){
+        console.log(this.is_Heatmap)
+        if(!this.is_Heatmap==false){
+            return
+        }
         var features = createHeatMapByEvent(this.result);
-        console.log(features);
         var heatmapSource = null;
         for (var i = 0; i < features.length; i++) {
             features[i].set('weight', parseFloat(this.result.SFEleArray[i].AttValue[3]) * 0.2);
@@ -177,14 +194,15 @@ import Heatmap from 'ol/layer/Heatmap';
             heatmapSource = new VectorSource({
                 wrapX: false
             });
-            var heatmapLayer = new Heatmap({
+             this.heatmapLayer = new Heatmap({
                 source: heatmapSource,
                 radius: 10,
                 blur: 10
             });
-            this.map.addLayer(heatmapLayer);
+            this.map.addLayer(this.heatmapLayer);
         }
         heatmapSource.addFeatures(features);
+        this.is_Heatmap = true
     },
     createChartsByEvent() {
         document.getElementById('mapchart').style.display = 'block';
@@ -302,6 +320,17 @@ import Heatmap from 'ol/layer/Heatmap';
     
     this.myChart = this.$echarts.init(document.getElementById('char-content'))
     this.myChart.setOption(this.optionForMonth);
+    },
+    close(){
+        this.is_Heatmap = false
+        if (this.draw) {
+    this.map.removeInteraction(this.draw);
+    this.draw = null;
+    this.map.removeLayer(this.heatmapLayer);
+    this.map.removeLayer(this.ciecleVector);
+    document.getElementById('divShowResult').style.display = 'none';
+    this.toggleChart();
+        }
     },
     L123(){
         this.myChart.setOption(this.optionForMonth);
