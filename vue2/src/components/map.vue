@@ -12,6 +12,7 @@
     <Admin  ref="adminComponentRef"  />
     <Traffic :map="map" ref="trafficComponentRef"  />
     <Screenshot :map="map" ref="screenshotComponentRef"  />
+    <Searchinfo :map="map" ref="searchInfoComponentRef"  />
     <div class="navbar-container">
       <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal"  style="display:flex" >
         <el-menu-item index="3" disabled  class="logo custom-disabled" style="color:red; margin-left:100px;margin-right:35px;">光谷智慧交通系统</el-menu-item>
@@ -51,7 +52,7 @@
       <el-menu :default-active="activeIndex" class="el-menu-demo1" mode="horizontal"  style="display:flex;right:0px" > 
         <el-menu-item index="1"  style="margin-left:200px;margin-right:50px;width:400px">
             <el-input placeholder="请输入查询交通事故信息" v-model="input3" class="input-with-select" >
-              <el-button slot="append" icon="el-icon-search"  @click="handleInput"></el-button>
+              <el-button slot="append" icon="el-icon-search"  @click="handleSearch"></el-button>
             </el-input>
         </el-menu-item>
         <el-menu-item index="2" style="margin-left:80px">
@@ -107,7 +108,7 @@ import {XYZ,OSM} from "ol/source";
 import VectorSource from 'ol/source/Vector';
 import  {ZoomToExtent,FullScreen,MousePosition,ScaleLine} from 'ol/control';
 import {Style, Fill as StyleFill, Stroke as StyleStroke, Circle as StyleCircle, Text as StyleText,Icon} from 'ol/style';
-import Measure from '../views/Measure';
+import Measure from '../views/Measure.vue';
 import Popup from '../views/Popup.vue';
 import Addevent from '../views/Addevent.vue';
 import Eventquery from '../views/Eventquery.vue';
@@ -119,7 +120,8 @@ import ChangePassword from '../views/ChangePassword.vue';
 import { bus } from '../main';
 import Admin from '../views/Admin.vue';
 import Traffic from '../views/Traffic.vue';
-import Screenshot from '../views/Screenshot';
+import Screenshot from '../views/Screenshot.vue';
+import Searchinfo from '../views/Searchinfo.vue'
 export default {
   components: {
     Measure,
@@ -133,7 +135,8 @@ export default {
     ChangePassword,
     Admin,
     Traffic,
-    Screenshot
+    Screenshot,
+    Searchinfo
   },
   data() {
     return {
@@ -318,42 +321,6 @@ export default {
   }
 },
 
-async handleInput(){
-  if(this.input3 === ''){
-    this.$message.error('请输入内容');
-  }
-  else{
-    this.clearPreviousData();
-  var ol_features111 = await eventQueryByKeyword(this.input3, 123);
-  // 所有在data中定义的变量都要用this来访问
-  var source = new VectorSource({wrapX:false});
-        var layer123 = new VectorLayer({
-            source
-        })
-
-        layer123.setStyle(
-            new Style({
-                image:new StyleCircle({
-                    radius:12,
-                    fill:new StyleFill({ 
-                        color:'#2A2A2A'
-                    }),
-                    stroke: new StyleStroke({
-                            color: '#ffcc33',
-                            width: 2
-                        })
-                })
-            })
-        )
-    source.addFeatures(ol_features111);
-    this.searchLayer = layer123;
-  await this.map.addLayer(this.searchLayer);
-  }
-
-},
-
-
-
 handleQueryCameraVecLayer() {
   this.$refs.popupComponentRef.popup();
 },
@@ -416,6 +383,10 @@ traffic_off(){
 },
 Export(){
   this.$refs.screenshotComponentRef.captureScreenshot();
+},
+handleSearch(){
+  console.log('123')
+  this.$refs.searchInfoComponentRef.searchInfo(this.input3);
 },
 
   }
