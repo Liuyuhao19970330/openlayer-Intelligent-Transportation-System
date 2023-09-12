@@ -11,9 +11,10 @@
     <ChangePassword  ref="changepasswordComponentRef"  />
     <Admin  ref="adminComponentRef"  />
     <Traffic :map="map" ref="trafficComponentRef"  />
+    <Screenshot :map="map" ref="screenshotComponentRef"  />
     <div class="navbar-container">
       <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal"  style="display:flex" >
-        <el-menu-item index="3" disabled class="logo" style="color:red; margin-left:100px;margin-right:35px;">光谷智慧交通系统111111111111</el-menu-item>
+        <el-menu-item index="3" disabled  class="logo custom-disabled" style="color:red; margin-left:100px;margin-right:35px;">光谷智慧交通系统</el-menu-item>
         <el-submenu index="1" style="margin-left:5px">
           <template slot="title" >实时路况</template>
           <el-menu-item index="1-1" style="margin-left:20%" @click="traffic_on" >开启实时路况</el-menu-item>
@@ -44,11 +45,11 @@
           <el-menu-item index="2-1" style="margin-left:25%" @click="measure1()" >测量距离</el-menu-item>
           <el-menu-item index="2-2" style="margin-left:25%" @click="measure2()">测量面积</el-menu-item>
           <el-menu-item index="2-3" style="margin-left:25%" @click="clearMeasure()">关闭测量</el-menu-item>
-          <el-menu-item index="2-4" style="margin-left:25%">导出图片</el-menu-item>
+          <el-menu-item index="2-4" style="margin-left:25%" @click="Export()">导出图片</el-menu-item>
         </el-submenu>
       </el-menu>  
       <el-menu :default-active="activeIndex" class="el-menu-demo1" mode="horizontal"  style="display:flex;right:0px" > 
-        <el-menu-item index="1"  style="margin-left:400px;margin-right:50px">
+        <el-menu-item index="1"  style="margin-left:200px;margin-right:50px;width:400px">
             <el-input placeholder="请输入查询交通事故信息" v-model="input3" class="input-with-select" >
               <el-button slot="append" icon="el-icon-search"  @click="handleInput"></el-button>
             </el-input>
@@ -104,23 +105,21 @@ import {Vector as VectorLayer, Tile as TileLayer} from 'ol/layer'
 import Group from "ol/layer/Group";
 import {XYZ,OSM} from "ol/source";
 import VectorSource from 'ol/source/Vector';
-import { toLonLat } from "ol/proj";
-import { toStringHDMS } from "ol/coordinate";
 import  {ZoomToExtent,FullScreen,MousePosition,ScaleLine} from 'ol/control';
 import {Style, Fill as StyleFill, Stroke as StyleStroke, Circle as StyleCircle, Text as StyleText,Icon} from 'ol/style';
-import { Circle as GeomCircle, Point as GeomPoint, LineString as GeomLineString, Polygon as GeomPolygon } from 'ol/geom';
 import Measure from '../views/Measure';
 import Popup from '../views/Popup.vue';
 import Addevent from '../views/Addevent.vue';
-import Eventquery from '../views/Eventquery.vue'
-import Publish from '../views/Publish.vue'
-import Roadinfo from '../views/Roadinfo.vue'
-import Reportroadinfo from '../views/Reportroadinfo.vue'
-import Eventinfo from '../views/Eventinfo.vue'
-import ChangePassword from '../views/ChangePassword.vue'
+import Eventquery from '../views/Eventquery.vue';
+import Publish from '../views/Publish.vue';
+import Roadinfo from '../views/Roadinfo.vue';
+import Reportroadinfo from '../views/Reportroadinfo.vue';
+import Eventinfo from '../views/Eventinfo.vue';
+import ChangePassword from '../views/ChangePassword.vue';
 import { bus } from '../main';
-import Admin from '../views/Admin.vue'
-import Traffic from '../views/Traffic.vue'
+import Admin from '../views/Admin.vue';
+import Traffic from '../views/Traffic.vue';
+import Screenshot from '../views/Screenshot';
 export default {
   components: {
     Measure,
@@ -133,7 +132,8 @@ export default {
     Eventinfo,
     ChangePassword,
     Admin,
-    Traffic
+    Traffic,
+    Screenshot
   },
   data() {
     return {
@@ -414,6 +414,10 @@ traffic_on(){
 traffic_off(){
   this.$refs.trafficComponentRef.close();
 },
+Export(){
+  this.$refs.screenshotComponentRef.captureScreenshot();
+},
+
   }
 }
 </script>
@@ -474,7 +478,10 @@ body {
   border: 2px solid rgb(121, 182, 206);
   box-shadow: 0px 0px 5px 5px rgba(121, 182, 206, 0.5);
 }
-
+.custom-disabled {
+  color: #999; /* 修改字体颜色 */
+  background-color: transparent; /* 修改背景色 */
+}
 
 
 </style>

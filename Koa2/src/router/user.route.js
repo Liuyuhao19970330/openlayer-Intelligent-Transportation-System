@@ -1,7 +1,7 @@
 const Router = require('koa-router')
 const {auth} = require('../middleware/auth.middleware')
 const {userValidator,verifyUser,verifyLogin} = require('../middleware/user.middleware')
-const { road,searchUsers,register,login1,changePassword,loginOut,userData,search1,modify,delete1} = require('../controller/user.controller')
+const { road,searchUsers,register,login1,changePassword,loginOut,userData,search1,modify,delete1,modify1,del1} = require('../controller/user.controller')
 
 const router = new Router({ prefix: '/api' })
 
@@ -16,5 +16,7 @@ router.post('/admin' , userData)
 router.post('/search1' , search1)
 router.post('/admin1' , modify)
 router.post('/delete' , delete1)
+router.patch('/Eventinfo1' , modify1)
+router.post('/Del1' ,del1)
 
 module.exports = router

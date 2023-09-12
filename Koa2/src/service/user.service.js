@@ -6,14 +6,12 @@ class UserService {
     async createRoad(type,address, building,date1,date2,description,x_username) {
       // todo: 写入数据库
       const res = await User.create({ type,address, building,date1,date2,description,x_username })
-      console.log(res)
       return res.dataValues
     }
 
     async createUser(username,password,type) {
       // todo: 写入数据库
       const res = await User1.create({ username,password,type })
-      console.log(res)
       return res.dataValues
     }
     

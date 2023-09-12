@@ -2,6 +2,7 @@ const { createRoad,userFind,createUser,FindUser,updateById,userFind1} = require(
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config/config.default')
 const User1 = require('../model/user model1')
+const User = require('../model/usermodel')
 class UserController {
   async road(ctx, next) {
     try {
@@ -186,11 +187,36 @@ class UserController {
       };
     }
   }
+  async  modify1(ctx) {
+    console.log(ctx.request.body);
+    const { form, oldForm } = ctx.request.body;
+    const {type:oldType,address:oldAddress,building:oldBuilding,description:oldDescription,x_username:oldName} = oldForm;
+    const {type, address, building,description,x_username,date1,date2} = form;
+    await User.update(
+      { type:type,
+        address:address,
+        building:building,
+        description:description,
+        x_username:x_username,
+        date1:date1,
+        date2:date2
+      },
+      { where: { x_username: oldName,
+                description:oldDescription,
+                building:oldBuilding,
+                address:oldAddress,
+                type:oldType           
+              } },
+      
+    );
+    ctx.body = { 
+      code:0,
+      message: 'Password updated successfully' }
+  }
+
   async  modify(ctx) {
     const {username,password,type,oldUsername }= ctx.request.body;
-
-    console.log(oldUsername)
-    await User1.update(
+    await User.update(
       { password: password,
       username: username,
       type: type,
@@ -206,6 +232,17 @@ class UserController {
     const {username,password,type }= ctx.request.body;
     await User1.destroy({
       where: { username: username, password: password,type:type }
+    })
+    ctx.body = {
+      code: 0,
+      message: '删除成功',
+    };
+  }
+  async del1(ctx){
+    console.log(ctx.request.body)
+    const {type, address, building,description,x_username }= ctx.request.body;
+    await User.destroy({
+      where: { address: address, building: building,type:type,description:description,x_username:x_username }
     })
     ctx.body = {
       code: 0,
