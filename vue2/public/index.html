@@ -281,8 +281,8 @@
                         break;
                 }
             }
-            $("#popup-title").html("添加事件");
-            $("#popup-content")[0].innerHTML = "<div class='tb-event'><table class='table table-bordered'>" + trs + "</table></div>" +
+            $("#popup-title_2").html("添加事件");
+            $("#popup-content_2")[0].innerHTML = "<div class='tb-event'><table class='table table-bordered'>" + trs + "</table></div>" +
                 "<div class='btn-event'><button class='btn btn-primary btn-sm mr5' onclick='creatFeature(" + position[0] + "," + position[1] + ")'>提交</button><button id='btn-cancel' class='btn btn-default btn-sm ml5 btn-primary-border'  >取消</button></div>";
             $(".event-type option[value='"+eventAdd.type+"']").prop("selected", true);
                 resolve(result);

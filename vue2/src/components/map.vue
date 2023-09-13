@@ -12,10 +12,14 @@
     <Admin  ref="adminComponentRef"  />
     <Traffic :map="map" ref="trafficComponentRef"  />
     <Screenshot :map="map" ref="screenshotComponentRef"  />
-    <Searchinfo :map="map" ref="searchInfoComponentRef"  />
+    <Search2 :map="map" ref="search2ComponentRef"  />
+    
     <div class="navbar-container">
       <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal"  style="display:flex" >
-        <el-menu-item index="3" disabled  class="logo custom-disabled" style="color:red; margin-left:100px;margin-right:35px;">光谷智慧交通系统</el-menu-item>
+        <el-menu-item index="3"  class="logo "  style="color:red; margin-left:50px;margin-right:35px;user-select: none;pointer-events: none;font-size:18px">
+          <svg t="1694567579802" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5471" width="40" height="40"><path d="M959.992 703.988H64.008c-35.282 0-64-28.688-64-64V277.324c0-35.282 28.718-63.998 64-63.998h895.984c35.31 0 63.998 28.716 63.998 63.998v362.664c0 35.312-28.688 64-63.998 64z" fill="#FFCE54" p-id="5472"></path><path d="M0.01 639.988c0 35.312 28.718 64 64 64h95.826v-85.312H0.01v21.312z" fill="#E6E9ED" p-id="5473"></path><path d="M1023.99 298.668H106.68c-11.782 0-21.344 9.546-21.344 21.328v170.668c0 11.782 9.562 21.312 21.344 21.312h917.31V298.668z" fill="#4FC2E9" p-id="5474"></path><path d="M192.006 597.302c-58.812 0-106.67 47.874-106.67 106.686 0 58.81 47.858 106.686 106.67 106.686s106.67-47.876 106.67-106.686c0-58.812-47.858-106.686-106.67-106.686zM789.306 597.302c-58.81 0-106.624 47.874-106.624 106.686 0 58.81 47.812 106.686 106.624 106.686 58.842 0 106.686-47.876 106.686-106.686 0-58.812-47.844-106.686-106.686-106.686z" fill="#434A54" p-id="5475"></path><path d="M207.1 688.926c8.328 8.312 8.328 21.812 0 30.124-8.344 8.376-21.844 8.376-30.17 0-8.344-8.312-8.344-21.812 0-30.124 8.326-8.376 21.826-8.376 30.17 0z" fill="#F5F7FA" p-id="5476"></path><path d="M362.674 512.07h256.01v191.918H362.674z" fill="#E6E9ED" p-id="5477"></path><path d="M804.432 688.926c8.312 8.312 8.312 21.812 0 30.124-8.344 8.376-21.874 8.376-30.186 0-8.312-8.312-8.312-21.812 0-30.124 8.312-8.376 21.842-8.376 30.186 0z" fill="#F5F7FA" p-id="5478"></path><path d="M480 298.668h21.328v405.32H480z" fill="#E6E9ED" p-id="5479"></path><path d="M190.616 512.07l-0.658-213.402 42.672-0.126 0.656 213.372zM768.308 512.07l-0.624-213.402 42.622-0.126 0.688 213.372z" fill="#3BAFDA" p-id="5480"></path><path d="M362.674 298.668h256.012v405.32h21.31V277.324H341.332v426.664h21.342zM1023.99 554.678h-63.998c-11.782 0-21.312 9.5-21.312 21.312s9.532 21.312 21.312 21.312h63.998v-42.624z" fill="#E6E9ED" p-id="5481"></path>
+          </svg>
+          &nbsp;光谷智慧交通系统</el-menu-item>
         <el-submenu index="1" style="margin-left:5px">
           <template slot="title" >实时路况</template>
           <el-menu-item index="1-1" style="margin-left:20%" @click="traffic_on" >开启实时路况</el-menu-item>
@@ -25,10 +29,10 @@
         <el-menu-item index="3" @click="handleClick()" >发布公告</el-menu-item>
         <el-submenu index="4" style="margin-left:5px">
           <template slot="title" >视频监控</template>
-          <el-menu-item index="2-1" style="margin-left:20%" @click="handleQueryCameraVecLayer" >开启视频监控</el-menu-item>
-          <el-menu-item index="2-2" style="margin-left:20%" @click="handleQueryCameraVecLayer1">关闭视频监控</el-menu-item>
+          <el-menu-item index="2-1" style="margin-left:20%" @click="Video_on" >开启视频监控</el-menu-item>
+          <el-menu-item index="2-2" style="margin-left:20%" @click="Video_off">关闭视频监控</el-menu-item>
         </el-submenu>
-        <el-menu-item index="5"  @click="handleQueryCameraVecLayer1" >事件添加</el-menu-item>  
+        <el-menu-item index="5"  >事件添加</el-menu-item>  
         <el-submenu index="6" style="margin-left:5px">
           <template slot="title" >事件更新</template>
           <el-menu-item index="6-1" style="margin-left:20%" @click="Updates_on" >开启事件更新</el-menu-item>
@@ -52,7 +56,7 @@
       <el-menu :default-active="activeIndex" class="el-menu-demo1" mode="horizontal"  style="display:flex;right:0px" > 
         <el-menu-item index="1"  style="margin-left:200px;margin-right:50px;width:400px">
             <el-input placeholder="请输入查询交通事故信息" v-model="input3" class="input-with-select" >
-              <el-button slot="append" icon="el-icon-search"  @click="handleSearch"></el-button>
+              <el-button slot="append" icon="el-icon-search"  @click="abc123"></el-button>
             </el-input>
         </el-menu-item>
         <el-menu-item index="2" style="margin-left:80px">
@@ -86,12 +90,17 @@
           <i class="el-icon-location"></i>
           <span slot="title" >导航一</span>
         </template>
-        <el-menu-item-group  >
-          <span slot="title" class="menu1">图层目录</span>
-          <div style="display:flex;flex-direction: column;margin-right:75px;padding:0px">
-            <input type="checkbox" v-for="(input, index) in inputs" :key="index" v-model="input.checked" :name="input.name" @change="handleInputChange(index)">
+        <el-menu-item-group style="padding-bottom: 10px;" >
+          <span slot="title" style="font-size:15px;color:skyblue;margin-left:5px;user-select: none;">图层目录</span>
+          <!-- <div style="display:flex;flex-direction: column;margin-right:75px;margin-left:-25px;padding:0px;margin-bottom: 10px;">
+            <input style="margin-top:10px" type="checkbox" v-for="(input, index) in inputs" :key="index" v-model="input.checked" :name="input.name" @change="handleInputChange(index)">
+          </div> -->
+          <div style="margin-top: 10px;display:flex;flex-direction: column;margin-left:25px">
+            <label style="cursor: pointer" v-for="(input, index) in inputs" :key="index">
+              <input  type="checkbox" v-model="input.checked" :name="input.name" @change="handleInputChange(index)">
+              {{ input.name }}
+            </label>
           </div>
-          
         </el-menu-item-group>
       </el-submenu>
     </el-menu>
@@ -101,13 +110,14 @@
 
 <script>
 import "ol/ol.css";
+import Overlay from "ol/Overlay";
 import { Map, View ,transform} from "ol";
 import {Vector as VectorLayer, Tile as TileLayer} from 'ol/layer'
 import Group from "ol/layer/Group";
 import {XYZ,OSM} from "ol/source";
 import VectorSource from 'ol/source/Vector';
 import  {ZoomToExtent,FullScreen,MousePosition,ScaleLine} from 'ol/control';
-import {Style, Fill as StyleFill, Stroke as StyleStroke, Circle as StyleCircle, Text as StyleText,Icon} from 'ol/style';
+import {Style, Fill as StyleFill, Stroke as StyleStroke, Circle as StyleCircle, Text as StyleText,Icon as StyleIcon} from 'ol/style';
 import Measure from '../views/Measure.vue';
 import Popup from '../views/Popup.vue';
 import Addevent from '../views/Addevent.vue';
@@ -120,8 +130,8 @@ import ChangePassword from '../views/ChangePassword.vue';
 import { bus } from '../main';
 import Admin from '../views/Admin.vue';
 import Traffic from '../views/Traffic.vue';
-import Screenshot from '../views/Screenshot.vue';
-import Searchinfo from '../views/Searchinfo.vue'
+import Screenshot from '../views/Screenshot.vue'
+import Search2 from '../views/search2.vue'
 export default {
   components: {
     Measure,
@@ -136,7 +146,7 @@ export default {
     Admin,
     Traffic,
     Screenshot,
-    Searchinfo
+    Search2
   },
   data() {
     return {
@@ -165,6 +175,7 @@ export default {
         // 添加更多需要的输入元素
       ],
       isCollapse: true
+      
     };
     
   },
@@ -313,18 +324,10 @@ export default {
       this.map.getLayers().item(0).setVisible(true);
     },
 
-    clearPreviousData() {
-  if (this.searchLayer) {
-    // 移除之前的图层
-    this.map.removeLayer(this.searchLayer);
-    this.searchLayer = null;
-  }
-},
-
-handleQueryCameraVecLayer() {
+Video_on() {
   this.$refs.popupComponentRef.popup();
 },
-handleQueryCameraVecLayer1() {
+Video_off() {
   this.$refs.popupComponentRef.cleanPopup();
 },
 handleClick(){
@@ -384,9 +387,13 @@ traffic_off(){
 Export(){
   this.$refs.screenshotComponentRef.captureScreenshot();
 },
-handleSearch(){
-  console.log('123')
-  this.$refs.searchInfoComponentRef.searchInfo(this.input3);
+abc123(){
+  if(this.input3 === ''){
+                this.$message.error('请输入内容');
+                return
+            }
+
+  this.$refs.search2ComponentRef.abc(this.input3);
 },
 
   }
@@ -448,10 +455,6 @@ body {
 .selected {
   border: 2px solid rgb(121, 182, 206);
   box-shadow: 0px 0px 5px 5px rgba(121, 182, 206, 0.5);
-}
-.custom-disabled {
-  color: #999; /* 修改字体颜色 */
-  background-color: transparent; /* 修改背景色 */
 }
 
 

@@ -56,7 +56,8 @@ export default {
           password: '',
           type:'common',
         },
-        x_username:''
+        x_username:'',
+        currentDateTime:''
       }
     },
     mounted() {
@@ -66,14 +67,29 @@ export default {
     },
     methods: {
      async onSubmit() {
+      console.log(this.currentDateTime)
         await this.$post('http://localhost:8000/api/login1',this.form).then(resp=>{
           if(resp.code===0){
             this.x_username = resp.result.username
             this.form = {};
-            this.$message({
-              message:'成功登录',
-              type:'success'
-            });
+            this.currentDateTime = new Date().getHours();
+            if (this.currentDateTime >= 4 && this.currentDateTime < 12) {
+                  this.$message({
+                  message:`早上好，${this.x_username}`,   //必须采用反引号来写字符加参数
+                  type:'success'
+                });
+            } else if (this.currentDateTime >= 12 && this.currentDateTime < 18) {
+              this.$message({
+                  message:`下午好, ${this.x_username}`,
+                  type:'success'
+                });
+            } else {
+              this.$message({
+                  message:`晚上好,${this.x_username}`,
+                  type:'success'
+                });
+            }
+            
             this.$router.push({path:'/api/map'})
             
           }

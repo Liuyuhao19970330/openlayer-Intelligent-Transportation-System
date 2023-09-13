@@ -142,7 +142,6 @@ export default {
     left: -50px;
 }
 
-.ol-popup:after,
 .ol-popup:before {
     top: 100%;
     border: solid transparent;

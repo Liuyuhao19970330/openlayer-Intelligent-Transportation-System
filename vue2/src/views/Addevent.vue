@@ -1,8 +1,8 @@
 <template>
-    <div id="popup" class="ol-popup">
-        <div id="popup-title" class="popup-title"></div>
-         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-         <div id="popup-content" class="popup-content"></div>
+    <div id="popup_2" class="ol-popup_2">
+        <div id="popup-title_2" class="popup-title_2"></div>
+         <a href="#" id="popup-closer_2" class="ol-popup-closer_2"></a>
+         <div id="popup-content_2" class="popup-content_2"></div>
      </div>
 </template>
  
@@ -29,8 +29,8 @@
                 });
                 this.map.addInteraction(this.draw);
                 this.draw.on('drawend', async e=>{ await addFeatureCallback(e);
-                    var container = document.getElementById("popup");
-                    var closer = document.getElementById("popup-closer");
+                    var container = document.getElementById("popup_2");
+                    var closer = document.getElementById("popup-closer_2");
                     var btn_cancel = document.getElementById("btn-cancel");
                     var overlay = new Overlay({
                         element: container,
@@ -64,7 +64,7 @@
 }
  </script>
  <style scoped>
- .ol-popup {
+ .ol-popup_2 {
      position: absolute;
      background-color: white;
      -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
@@ -76,8 +76,8 @@
      left: -50px;
  }
  
- .ol-popup:after,
- .ol-popup:before {
+ .ol-popup_2:after,
+ .ol-popup_2:before {
      top: 100%;
      border: solid transparent;
      content: " ";
@@ -87,32 +87,32 @@
      pointer-events: none;
  }
  
- .ol-popup:after {
+ .ol-popup_2:after {
      border-top-color: white;
      border-width: 10px;
      left: 48px;
      margin-left: -10px;
  }
  
- .ol-popup:before {
+ .ol-popup_2:before {
      border-top-color: #cccccc;
      border-width: 11px;
      left: 48px;
      margin-left: -11px;
  }
  
- .ol-popup-closer {
+ .ol-popup-closer_2 {
      text-decoration: none;
      position: absolute;
      top: 2px;
      right: 8px;
  }
  
- .popup-content {
+ .popup-content_2 {
      width: 400px;
  }
  
- .ol-popup-closer:after {
+ .ol-popup-closer_2:after {
      content: "✖";
  }
 

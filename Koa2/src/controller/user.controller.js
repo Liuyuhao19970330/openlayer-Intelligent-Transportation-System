@@ -216,18 +216,19 @@ class UserController {
 
   async  modify(ctx) {
     const {username,password,type,oldUsername }= ctx.request.body;
-    await User.update(
+    console.log(ctx.request.body)
+    await User1.update(
       { password: password,
       username: username,
       type: type,
       },
-      { where: { username: oldUsername } },
-      
+      { where: { username: oldUsername } },  
     );
     ctx.body = { 
       code:0,
       message: 'Password updated successfully' }
   }
+
   async delete1(ctx){
     const {username,password,type }= ctx.request.body;
     await User1.destroy({
