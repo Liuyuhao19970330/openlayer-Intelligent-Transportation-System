@@ -1,12 +1,61 @@
 <template>
     <div>
-        <div id="divShowResult" style="display: none;">
-        <div style="background-color: white;position:relative;padding:7px;padding-left:15px">
+    <div id="divShowResult" style="overflow:auto;height:600px;margin-top:20px;display: none;width: 49%;left:28%;bottom:0px;margin-bottom:-290px">
+        <div style="display:flex;background-color: white;position:relative;padding:7px;padding-left:15px">
             <el-button @click="handclick1()" style="margin-right:10px">事件热力图</el-button>
             <el-button @click="createChartsByEvent()" >事件统计图</el-button>
+            <div style="position:relative;top:5px;right:-730px;cursor: pointer;" @click="table_off"><svg t="1693452797521" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1763" width="24" height="24"><path d="M0 0h1024v1024H0z" fill="#d81e06" fill-opacity="0" p-id="1764"></path><path d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z" fill="#d81e06" p-id="1765"></path>
+    </svg></div> 
         </div>
-        <div id="resulttable"></div> 
-    </div>
+    <el-table
+      :data="tableData_1"
+      height="250"
+      border
+      style="width: 100%">
+      <el-table-column
+        prop="code"
+        label="事件编号"
+        width="140">
+      </el-table-column>
+      <el-table-column
+        prop="type"
+        label="事件类型"
+        width="80">
+      </el-table-column>
+      <el-table-column
+        prop="level"
+        label="事件等级"
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="time"
+        label="事故时间"
+        width="140">
+      </el-table-column>
+      <el-table-column
+        prop="address"
+        label="事故地址"
+        width="200">
+      </el-table-column>
+      <el-table-column
+        prop="num"
+        label="车牌号"
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        label="驾驶员"
+        width="100">
+      </el-table-column>
+      <el-table-column
+        prop="state"
+        label="处理状态"
+        width="130">
+      </el-table-column>
+    </el-table>   
+  </div>
+
+
     <div id="mapchart" style="display: none;">
         <div style ="position:relative;display: flex;align-items: center;justify-content: center;margin:10px" >事件统计图
             <div style="position:absolute;right:2px;top:1px;cursor: pointer;" @click="toggleChart"><svg t="1693452797521" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1763" width="24" height="24"><path d="M0 0h1024v1024H0z" fill="#d81e06" fill-opacity="0" p-id="1764"></path><path d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z" fill="#d81e06" p-id="1765"></path></svg></div>
@@ -45,7 +94,9 @@ import Heatmap from 'ol/layer/Heatmap';
         typeArray:[],
         heatmapLayer:null,
         ciecleVector:null,
-        is_Heatmap:false
+        is_Heatmap:false,
+        tableData:[],
+        tableData_1:[]
      }                   
    },
    mounted(){
@@ -77,11 +128,13 @@ import Heatmap from 'ol/layer/Heatmap';
     }
     },
     getEventGradeByNum(value) {
-    if (value === "0") {
+    if (value === "1") {
         return "轻微事故";
-    } else if (value === "1") {
-        return "中等事故";
     } else if (value === "2") {
+        return "一般事故";
+    } else if (value === "3") {
+        return "重大事故";
+    } else if (value === "4") {
         return "特大事故";
     } else {
         return "未知等级";
@@ -115,35 +168,47 @@ import Heatmap from 'ol/layer/Heatmap';
                         this.map.addLayer(this.ciecleVector);
                     }
                     var features = [];
-                    var tbody = "";
+                    for(let i = 0; i< this.result.SFEleArray.length;i++) {
+                        this.tableData.push(this.result.SFEleArray[i].AttValue)
+                    }
+                    for(let i = 0; i< this.tableData.length;i++) {
+                        if ( this.tableData[i][2] === "1") {
+                            this.tableData[i][2]= "轻微事故"
+                        } else if ( this.tableData[i][2] === "2") {
+                            this.tableData[i][2]= "一般事故"
+                        } else if ( this.tableData[i][2] === "3") {
+                            this.tableData[i][2]= "重大事故"
+                        }else if ( this.tableData[i][2] === "4") {
+                            this.tableData[i][2]= "特大事故"
+                        }
+                    }
+                    for(let i = 0; i< this.tableData.length;i++) {
+                        if ( this.tableData[i][7] === "0") {
+                            this.tableData[i][7]= "未处理"
+                        } else if ( this.tableData[i][7] === "1") {
+                            this.tableData[i][7]= "处理中"
+                        } else if ( this.tableData[i][7] === "2") {
+                            this.tableData[i][7]= "已处理"
+                        }
+                    }
+                    for(let i = 0; i< this.tableData.length;i++){
+                        this.tableData_1.push({"code":this.tableData[i][0],"type":this.tableData[i][1],"level":this.tableData[i][2],"time":this.tableData[i][3],"address":this.tableData[i][4],
+                        "num":this.tableData[i][5],"name":this.tableData[i][6],"state":this.tableData[i][7]})
+                    }
+                    console.log(this.tableData_1)
+                    console.log(this.tableData)
                     for (var i = 0; i < this.result.SFEleArray.length; i++) {
                         var sfele = this.result.SFEleArray[i];
                         var bound = sfele.bound;
                         if (bound != undefined) {
                             var labelposition = [(bound.xmin + bound.xmax) / 2, (bound.ymin + bound.ymax) / 2];
                             var infojson = this.creatJsonInfo(this.result.AttStruct.FldName, sfele.AttValue);
-                            var tds = "";
-                            for (var j = 0; j < sfele.AttValue.length - 1; j++) {
-                                var value = sfele.AttValue[j];
-                                if (j == 7) {
-                                    value = this.getEventStatusByNum(value);//按数字获取事件状态
-                                    
-                                } else if (j == 2) {
-                                    value = this.getEventGradeByNum(value);//按数字获取事件等级
-                                }
-                                tds += "<td >" + value + "</td>";
-                            }
-                            tbody += "<tr>" + tds + "</tr>"
-                            //实例化Vector要素，通过矢量图层添加到地图容器中
+                            console.log(infojson)
                             var iconFeature = new Feature({
                                 geometry: new GeomPoint(labelposition),
                                 info: infojson
                             });
-
-                            // 事件处理状态
-                            var status = this.result.SFEleArray[i].AttValue[7];
                             iconFeature.setStyle(new Style({
-                                /**{olx.style.IconOptions}类型*/
                                 image: new StyleIcon(
                                     ({
                                         anchor: [0.5, 1],
@@ -151,29 +216,20 @@ import Heatmap from 'ol/layer/Heatmap';
                                         anchorXUnits: 'fraction',
                                         anchorYUnits: 'fraction',
                                         src: this.imgUrl
-                                        // src: '../../images/mapicon/label/' + status + '.png'
                                     })
                                 )
                             }));
                             features.push(iconFeature);
                         }
                     }
-                    var ths = "";
-                    document.getElementById('divShowResult').style.display = 'block';
-                    for (var i = 0; i < this.result.AttStruct.FldName.length - 1; i++) {
-                        ths += "<th>" + this.result.AttStruct.FldName[i] + "</th>"
-                    }
-                    var thead = "<thead ><tr>" + ths + "</tr></thead>";
-                    $("#resulttable").html("<table class='table table-hover table-bordered'>" +
-                        thead + "<tbody>" + tbody + "</tbody></table>");
-                    var auth = localStorage.getItem("auth");
-                    // if (auth != "common") {
-                        $("#divShowResult").show();
-                    // }
-                    labelSource.addFeatures(features);
+                    
+               document.getElementById('divShowResult').style.display = 'block';
+               labelSource.addFeatures(features);
                     this.map.un("click", ()=>{});
                     this.map.on("click", ()=>{
                     this.map.removeLayer(this.ciecleVector);
+                    this.tableData = [];
+                    this.tableData_1 = []
                 });
                 })
             }else {
@@ -222,7 +278,6 @@ import Heatmap from 'ol/layer/Heatmap';
             numForType++;
             typeObj[type] = numForType;
         }
-        console.log(this.result)
         for (var key in typeObj) {
             this.typeArray.push({ value: typeObj[key], name: key });
         }
@@ -330,6 +385,8 @@ import Heatmap from 'ol/layer/Heatmap';
     this.map.removeLayer(this.ciecleVector);
     document.getElementById('divShowResult').style.display = 'none';
     this.toggleChart();
+    this.tableData = []
+    this.tableData_1 = []
         }
     },
     L123(){
@@ -338,6 +395,17 @@ import Heatmap from 'ol/layer/Heatmap';
     L1234(){
         
         this.myChart.setOption(this.optionForType);
+    },
+    table_off(){
+        if (this.draw) {
+    this.map.removeInteraction(this.draw);
+    this.draw = null;
+    this.map.removeLayer(this.heatmapLayer);
+    this.map.removeLayer(this.ciecleVector);
+    document.getElementById('divShowResult').style.display = 'none';
+    this.tableData = []
+    this.tableData_1 = []
+        }
     }
 }
 }
@@ -376,5 +444,8 @@ import Heatmap from 'ol/layer/Heatmap';
     width: 100%;
     height: 80%;
 }
-
+::v-deep .el-table td,
+::v-deep .el-table th{
+  text-align: center ;
+}
 </style>

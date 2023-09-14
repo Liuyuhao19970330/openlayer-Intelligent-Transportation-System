@@ -29,6 +29,94 @@
         function querySuccess(result){
             console.log(result)
         }
+        function addLine() {
+            /* 
+            1、创建线要素  new Zondy.Object.Feature({})
+            2、创建要素集添加要素  new Zondy.Object.FeatureSet()  addFeature
+            3、调用中地服务添加要素 new Zondy.Service.EditDocFeature  add
+             */
+            //几何
+            var pointObj = []
+            pointObj[0] = new Zondy.Object.Point2D(114.30, 30.50);
+            pointObj[1] = new Zondy.Object.Point2D(118, 50);
+            //构成折线的弧段
+            var gArc = new Zondy.Object.Arc(pointObj);
+            //构成线的折线
+            var gAnyLine = new Zondy.Object.AnyLine([gArc]);
+            //设置线要素的几何信息
+            var gline = new Zondy.Object.GLine(gAnyLine);
+            //设置要素的几何信息
+            var fGeom = new Zondy.Object.FeatureGeometry({ LinGeom: [gline] });
+            /* style 图形参数信息 */
+            //随机输出1~8之间的整数,作为新添加的要素的颜色号
+
+            //设置添加线要素的图形参数信息
+            var clineInfo = new Zondy.Object.CLineInfo({
+                "Color": 1,  //线颜色
+                "LinStyleID": 0,  //线型号
+                "LinStyleID2": 24, //线型号
+                "LinWidth": 0.05,//线宽
+                "Xscale": 10,
+                "Yscale": 10
+            });
+            //设置要素的图形参数信息
+            var graphicInfo = new Zondy.Object.WebGraphicsInfo({
+                /* 
+                1-Point
+                2-LineString
+                3-Area
+                 */
+                InfoType: 2,
+                LinInfo: clineInfo
+            });
+            /* 属性信息 */
+            var attValue = ['长江', 2000];
+
+            var newFeature = new Zondy.Object.Feature({
+                fGeom: fGeom,
+                GraphicInfo: graphicInfo,
+                AttValue: attValue
+            });
+            //设置要素为线要素
+            newFeature.setFType(2);
+
+            /* 2、设置要素集 */
+            //创建一个要素数据集
+            var featureSet = new Zondy.Object.FeatureSet();
+            var fldNumber = attValue.length; //属性个数
+            /* 默认参数不用映射 */
+            var fldName = ["name", "length"];
+            var fldType = ["string", "int"];
+            //创建属性结构设置对象
+            var cAttStruct = new Zondy.Object.CAttStruct({
+                FldName: fldName,
+                FldNumber: fldNumber,
+                FldType: fldType
+            });
+            //设置要素数据集的树形结构
+            featureSet.AttStruct = cAttStruct;
+            //将添加的线要素添加到属性数据集中
+            featureSet.addFeature(newFeature);
+            /* 3、调用服务 */
+
+            //创建一个地图编辑对象
+            /* 第一个参数  地图文档的名称 第二个参数 要素所在的图层 */
+            var editDocFeature = new Zondy.Service.EditDocFeature("guanggu", 1, {
+                ip:'localhost',
+                port:'6163'
+            });
+            editDocFeature.add(featureSet, onLineSuccess);
+        }
+        //添加线要素回调函数
+        function onLineSuccess(rlt) {
+            var result = rlt;
+            if (result) {
+                alert("添加线要素成功！");
+                docLayer.refresh();
+            } else {
+                alert("添加线要素失败！");
+            }
+        }
         // 车流量的feature↓↓
          function queryByLayer() {
             return new Promise(function(resolve, reject) {
@@ -344,7 +432,8 @@
                 //创建一个编辑服务类
                 var editService = new Zondy.Service.EditDocFeature('guanggu', 2, { ip: 'localhost', port: '6163' });
                 //执行添加点要素功能
-                editService.add(featureSet, onPntSuccess);
+                console.log(featureSet)
+                editService.add(featureSet,(result)=>{console.log(result)}, onPntSuccess);
         }
         function onPntSuccess(){
             console.log('成功')
@@ -404,80 +493,6 @@
         var format = new Zondy.Format.PolygonJSON();
         var features = format.read(result);
         return  features
-    }
-
-    function constructAnnouncementCallback(result) {
-        return new Promise(function(resolve, reject) {
-       var pointObj = new Array();
-        for (var i = 0; i < result.feature.getGeometry().getCoordinates().length; i++) {
-            var pointGeo = new Zondy.Object.Point2D(result.feature.getGeometry().getCoordinates()[i][0], result.feature.getGeometry().getCoordinates()[i][1]);
-            pointObj.push(pointGeo);
-        }
-        console.log(pointObj)
-        var gArc = new Zondy.Object.Arc(pointObj);
-        //构成线的折线
-        var gAnyLine = new Zondy.Object.AnyLine([gArc]);
-        //设置线要素的几何信息
-        var gline = new Zondy.Object.GLine(gAnyLine);
-        //设置要素的几何信息
-        var fGeom = new Zondy.Object.FeatureGeometry({ LinGeom: [gline] });
-        //设置属性结构
-
-        var regAttStr = new Zondy.Object.CAttStruct({
-            FldName: ["ID", "面积", "周长", "LayerID"],
-            FldNumber: 4,
-            FldType: ["FldLong", "FldDouble", "FldDouble", "FldLong"]
-        });
-        var values = [0, 62.566714, 50.803211, 0];
-        var valuesRow = new Zondy.Object.CAttDataRow(values, 1);
-        var featureBufBySR = new Zondy.Service.FeatureBuffBySingleRing({
-            ip: 'localhost',
-            port: '6163',
-            //设置要素缓冲分析左半径
-            leftRad: 0.002,
-            //设置要素缓冲分析右半径
-            rightRad: 0.002
-        });
-        featureBufBySR.sfGeometryXML = JSON.stringify([fGeom]);
-        //设置属性结构
-        featureBufBySR.attStrctXML = JSON.stringify(regAttStr);
-        //设置属性值
-        featureBufBySR.attRowsXML = JSON.stringify([valuesRow]);
-        //设置追踪半径
-        featureBufBySR.traceRadius = 0.0001;
-        //设置缓冲结果的名称以及存放地址
-        featureBufBySR.resultName = "gdbp://MapGisLocal/wuhan/ds/buffer/sfcls/bufferresult" + getCurentTime();
-        //调用Zondy.Service.AnalysisBase基类的execute方法执行要素缓冲分析，AnalysisSuccess为回调函数。
-        featureBufBySR.execute(
-            bufferSuccess
-        , "post", false, "json");
-    })
-    
-}
-    function bufferSuccess(result) {
-        var clspath = result.results[0].Value;
-        //实例化ClipByLayer类
-        var clipParam = new Zondy.Service.ClipByLayer({
-            ip: 'localhost',
-            port: '6163',
-            //源简单要素类的URL
-            srcInfo1: "gdbp://MapGisLocal/wuhan/sfcls/居民区",
-            //裁剪框简单要素类的URL
-            srcInfo2: clspath,
-            //设置结果URL
-            desInfo: "gdbp://MapGisLocal/wuhan/ds/clip/sfcls/clipresult" + getCurentTime(),
-            infoOptType: 0
-        });
-        //调用基类的execute方法，执行图层裁剪分析。AnalysisSuccess为结果回调函数
-        clipParam.execute(clipSuccess, "post", false, "json", clipError);
-    }
-
-    function clipSuccess(e){
-        console.log(e)
-    }
-
-    function clipError(){
-        console.log('错误')
     }
 
     

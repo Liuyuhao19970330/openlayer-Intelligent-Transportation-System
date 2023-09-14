@@ -59,10 +59,10 @@
               <el-button slot="append" icon="el-icon-search"  @click="abc123"></el-button>
             </el-input>
         </el-menu-item>
-        <el-menu-item index="2" style="margin-left:80px">
+        <el-menu-item index="2" style="margin-left:22px;user-select:none">
           <el-dropdown trigger="click">
-          <span>
-            <el-avatar :size="40" src="#"></el-avatar>
+          <span style="font-size:17px">
+            <el-avatar :size="40" :src="circleUrl"></el-avatar>&nbsp;&nbsp;{{ x_username }}
           </span>
           <template #dropdown>
             <el-dropdown-menu >
@@ -79,8 +79,8 @@
     </div>
   <div class="img1">
     <!-- 右下角的图层切换窗口 -->
-    <img src="../assets/images/dog.jpg" alt="" srcset=""  @click="handleImageClick()" :class="{ 'selected': selectedImage === 'dog' }" >
-    <img src="../assets/images/long.jpg" alt="" srcset="" style="margin-left:20px" @click="handleImageClick1()" :class="{ 'selected': selectedImage === 'long' }">
+    <img src="../assets/images/dog.jpg" alt="" srcset=""  @click="handleImageClick()" :class="{ 'selected': selectedImage === 'dog' }" style="cursor: pointer" >
+    <img src="../assets/images/long.jpg" alt="" srcset="" style="margin-left:20px;cursor: pointer" @click="handleImageClick1()" :class="{ 'selected': selectedImage === 'long' }">
   </div>
   <div id="mouse-position"></div> <!-- 鼠标坐标显示的窗口 -->
   <div class="menu">
@@ -92,9 +92,6 @@
         </template>
         <el-menu-item-group style="padding-bottom: 10px;" >
           <span slot="title" style="font-size:15px;color:skyblue;margin-left:5px;user-select: none;">图层目录</span>
-          <!-- <div style="display:flex;flex-direction: column;margin-right:75px;margin-left:-25px;padding:0px;margin-bottom: 10px;">
-            <input style="margin-top:10px" type="checkbox" v-for="(input, index) in inputs" :key="index" v-model="input.checked" :name="input.name" @change="handleInputChange(index)">
-          </div> -->
           <div style="margin-top: 10px;display:flex;flex-direction: column;margin-left:25px">
             <label style="cursor: pointer" v-for="(input, index) in inputs" :key="index">
               <input  type="checkbox" v-model="input.checked" :name="input.name" @change="handleInputChange(index)">
@@ -174,8 +171,8 @@ export default {
       { name: '警务室', checked: true }
         // 添加更多需要的输入元素
       ],
-      isCollapse: true
-      
+      isCollapse: true,
+      circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
     };
     
   },
@@ -392,8 +389,7 @@ abc123(){
                 this.$message.error('请输入内容');
                 return
             }
-
-  this.$refs.search2ComponentRef.abc(this.input3);
+  this.$refs.search2ComponentRef.accidents(this.input3);
 },
 
   }
@@ -433,13 +429,15 @@ body {
   z-index: 999;
 }
 #mouse-position{
+  padding: 2px 5px;
   position: fixed;
   bottom: 10px;
-  left:48%;
-  width: 220px;
+  left:20%;
+  width: 152px;
   height: 30px;
   border: 1px solid red;
   z-index: 999;
+  border-radius: 5px;
 }
 ::v-deep .el-menu.el-menu--horizontal{
   width:100vw !important;

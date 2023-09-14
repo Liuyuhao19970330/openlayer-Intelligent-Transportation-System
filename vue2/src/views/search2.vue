@@ -17,16 +17,17 @@ export default {
   data(){
     return{
         imgUrl:require("../assets/images/a1.jpeg"), //vue2加载图片要用请求的方式来访问相对路径;
-        layer:null,
+        layer_search:null,
         is_addLayer:false,
-        ol_features123:null
+        ol_features123:null,
+        layer_search:null
     }
   },
   methods:{
-    async abc(e){
-        if (this.layer) {
-    this.map.removeLayer(this.layer);
-    this.layer = null;
+    async accidents(e){
+        if (this.layer_search) {
+    this.map.removeLayer(this.layer_search);
+    this.layer_search = null;
   }
   this.ol_features123 = await eventQueryByKeyword(e);
     if(!this.ol_features123){
@@ -54,17 +55,17 @@ export default {
       var source = new VectorSource({
           features: this.ol_features123
       })
-      this.layer = new VectorLayer({
+      this.layer_search = new VectorLayer({
             source,
             style
         })
-        this.map.addLayer(this.layer)
+        this.map.addLayer(this.layer_search)
     }
         
         var container = document.getElementById('popup_1');
         var content = document.getElementById('popup-content_1');
         var closer = document.getElementById('popup-closer_1');
-        this.overlay = new Overlay(
+        var overlay = new Overlay(
             ({
                 //要转换成overlay的HTML元素
                 element: container,
@@ -76,7 +77,7 @@ export default {
                     duration: 250
                 }
             }));
-        this.map.addOverlay(this.overlay);  
+        this.map.addOverlay(overlay);  
         this.map.on('pointermove',  (e)=> {
             var pixel = this.map.getEventPixel(e.originalEvent);
             var hit = this.map.hasFeatureAtPixel(pixel);
@@ -84,7 +85,7 @@ export default {
         });
         try{let _that = this;
         this.map.on("click", (evt)=> {
-                var feature = _that.map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) { return feature; });
+                var feature = _that.map.forEachFeatureAtPixel(evt.pixel, function (feature, layer_search) { return feature; });
                         //清空popup的内容容器
                         // content.innerHTML = '';
                 let name = null
@@ -173,12 +174,17 @@ export default {
                     </tr>
                 </table>               
                 `;
-                _that.overlay.setPosition(evt.coordinate); //把 overlay 显示到指定的 x,y坐标
+                if (feature.values_.values_.驾驶员) {
+                    overlay.setPosition(evt.coordinate);
+                } else {
+                    overlay.setPosition(undefined);
+                }
+                
+                 //把 overlay 显示到指定的 x,y坐标
         })
-    
         var closer = document.getElementById("popup-closer_1");
             closer.onclick = () => {
-                _that.overlay.setPosition(undefined);
+                overlay.setPosition(undefined);
                 closer.blur();
                 return false;
             }
@@ -190,7 +196,7 @@ export default {
     },
 
     cleanPopup(){
-        this.map.removeLayer(this.layer);
+        this.map.removeLayer(this.layer_search);
         this.is_addLayer = false
     },
     mounted() {

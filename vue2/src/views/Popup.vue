@@ -19,7 +19,8 @@ export default {
     return{
         imgUrl:require("../assets/images/mark.jpg"), //vue2加载图片要用请求的方式来访问相对路径;
         layer:null,
-        is_addLayer:false
+        is_addLayer:false,
+        overlay_video:null
     }
   },
   methods:{
@@ -57,7 +58,7 @@ export default {
         var container = document.getElementById('popup');
         var content = document.getElementById('popup-content');
         var closer = document.getElementById('popup-closer');
-        this.overlay = new Overlay(
+        this.overlay_video = new Overlay(
             ({
                 //要转换成overlay的HTML元素
                 element: container,
@@ -69,7 +70,7 @@ export default {
                     duration: 250
                 }
             }));
-        this.map.addOverlay(this.overlay);  
+        this.map.addOverlay(this.overlay_video);  
         this.map.on('pointermove',  (e)=> {
             var pixel = this.map.getEventPixel(e.originalEvent);
             var hit = this.map.hasFeatureAtPixel(pixel);
@@ -77,23 +78,17 @@ export default {
         });
         let _that = this;
         this.map.on("click", function(evt) {
-                var feature = _that.map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) { return feature; });
+                var feature_1 = _that.map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) { return feature; });
                         //清空popup的内容容器
                         // content.innerHTML = '';
                 let name = null
                 let code = null
                 let video = null
-                try{ name = feature.values_.values_.位置;
-                     code = feature.values_.values_.编号;
-                     video = feature.values_.values_.URL;
+                try{ name = feature_1.values_.values_.位置;
+                     code = feature_1.values_.values_.编号;
+                     video =feature_1.values_.values_.URL;
                     }catch (error){return;}
 
-                let coordinate = transform(
-                    evt.coordinate,
-                    "EPSG:3857",
-                    "EPSG:4326"
-                );
-                // 点击尺 （这里是尺(米)，并不是经纬度）;
                 let videoHTML = '';
                 if (video) {
                     videoHTML = `<video controls>
@@ -107,11 +102,17 @@ export default {
                 ${videoHTML}
                 <hr/>
                 <p> 位置：${name}</p>`;
-                _that.overlay.setPosition(evt.coordinate); //把 overlay 显示到指定的 x,y坐标
+                if (feature_1.values_.values_.URL) {
+                    _that.overlay_video.setPosition(evt.coordinate);
+                    console.log(feature_1)
+                } else {
+                    _that.overlay_video.setPosition(undefined);
+                }
+                
         });
         var closer = document.getElementById("popup-closer");
             closer.onclick = () => {
-                _that.overlay.setPosition(undefined);
+                _that.overlay_video.setPosition(undefined);
                 closer.blur();
                 return false;
             };
@@ -121,6 +122,7 @@ export default {
 
     cleanPopup(){
         this.map.removeLayer(this.layer);
+        this.map.removeLayer(this.overlay_video);
         this.is_addLayer = false
     },
     mounted() {
