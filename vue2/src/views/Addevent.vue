@@ -9,15 +9,19 @@
  <script>
  import "ol/ol.css";
  import Overlay from "ol/Overlay";
- import { fromLonLat, transform, toLonLat } from "ol/proj";
-
  import { Draw } from 'ol/interaction';
+import {Style, Fill as StyleFill, Stroke as StyleStroke, Circle as StyleCircle, Text as StyleText,Icon as StyleIcon} from 'ol/style';
+import VectorSource from "ol/source/Vector";
+import {Vector as VectorLayer, Tile as TileLayer} from 'ol/layer';
  export default {
    props: ["map"],
    data(){
      return{
          layer:null,
-         result:null
+         result:null,
+         overlay_event:null,
+         is_addLayer:false,
+         imgUrl:require("../assets/images/mark.jpg")
      }
    },
 
@@ -54,6 +58,40 @@
                 });
             }                                    
  },
+ async upDate(){
+    const feature_event = await EventLayer()
+    if(this.is_addLayer == true){
+        return
+      }
+      const style = new Style({
+            //形状
+            image: new StyleIcon({
+                anchor: [0.5, -0.5],
+                anchorOrigin: 'bottom-right',
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'pixels',
+                offsetOrigin: 'top',
+                // offset:[0,10],
+                //图标缩放比例
+                scale: 1,
+                //透明度
+                opacity: 0.75,
+                //图标的url
+                src: this.imgUrl,
+                willReadFrequently: true,
+            }),
+        })
+      var source = new VectorSource({
+          features: feature_event
+      })
+      this.layer = new VectorLayer({
+            source,
+            style
+        })
+        this.map.addLayer(this.layer)
+ 
+ },
+
  close() {
   if (this.draw) {
     this.map.removeInteraction(this.draw);

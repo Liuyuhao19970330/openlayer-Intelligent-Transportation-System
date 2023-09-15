@@ -69,6 +69,7 @@ class UserController {
       );
       ctx.body = {
         code: 0,
+        data:res,
         message: '用户登录成功',
         result: {
           username:username,

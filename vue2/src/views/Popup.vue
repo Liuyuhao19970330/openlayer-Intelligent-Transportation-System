@@ -11,8 +11,6 @@ import Overlay from "ol/Overlay";
 import {Style, Fill as StyleFill, Stroke as StyleStroke, Circle as StyleCircle, Text as StyleText,Icon as StyleIcon} from 'ol/style';
 import VectorSource from "ol/source/Vector";
 import {Vector as VectorLayer, Tile as TileLayer} from 'ol/layer';
-import { fromLonLat, transform, toLonLat } from "ol/proj";
-import { toStringHDMS } from "ol/coordinate";
 export default {
   props: ["map"],
   data(){

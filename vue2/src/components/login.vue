@@ -57,7 +57,8 @@ export default {
           type:'common',
         },
         x_username:'',
-        currentDateTime:''
+        currentDateTime:'',
+        x_type:''
       }
     },
     mounted() {
@@ -70,8 +71,9 @@ export default {
       console.log(this.currentDateTime)
         await this.$post('http://localhost:8000/api/login1',this.form).then(resp=>{
           if(resp.code===0){
-            this.x_username = resp.result.username
-            this.form = {};
+            this.x_username = resp.result.username;
+            this.x_type = resp.data.type
+            console.log(this.x_type)
             this.currentDateTime = new Date().getHours();
             if (this.currentDateTime >= 4 && this.currentDateTime < 12) {
                   this.$message({
@@ -89,8 +91,17 @@ export default {
                   type:'success'
                 });
             }
-            
-            this.$router.push({path:'/api/map'})
+            switch(this.x_type){
+              case 'common':
+              this.$router.push({path:'/api/map'});
+              break;
+              case 'traffic':
+              this.$router.push({path:'/api/map'});
+              break;
+              case 'admin':
+              this.$router.push({path:'/api/map'});
+              break;
+            }
             
           }
           if(resp.code==='10004'){

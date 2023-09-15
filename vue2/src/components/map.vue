@@ -35,8 +35,8 @@
         <el-menu-item index="5"  >事件添加</el-menu-item>  
         <el-submenu index="6" style="margin-left:5px">
           <template slot="title" >事件更新</template>
-          <el-menu-item index="6-1" style="margin-left:20%" @click="Updates_on" >开启事件更新</el-menu-item>
-          <el-menu-item index="6-2" style="margin-left:20%" @click="Updates_off">关闭事件更新</el-menu-item>
+          <el-menu-item index="6-1" style="margin-left:20%" @click="Updates_on" >添加事件</el-menu-item>
+          <el-menu-item index="6-2" style="margin-left:20%" @click="Updates_off">关闭添加</el-menu-item>
         </el-submenu>
         <!-- <el-menu-item index="7"    >事件查询</el-menu-item> -->
         <el-submenu index="7" style="margin-left:5px">
@@ -55,7 +55,7 @@
       </el-menu>  
       <el-menu :default-active="activeIndex" class="el-menu-demo1" mode="horizontal"  style="display:flex;right:0px" > 
         <el-menu-item index="1"  style="margin-left:200px;margin-right:50px;width:400px">
-            <el-input placeholder="请输入查询交通事故信息" v-model="input3" class="input-with-select" >
+            <el-input @keyup.enter.native ="abc123" placeholder="请输入查询交通事故信息" v-model="input3" class="input-with-select" >
               <el-button slot="append" icon="el-icon-search"  @click="abc123"></el-button>
             </el-input>
         </el-menu-item>
