@@ -1,6 +1,7 @@
 # openlayer-Intelligent-Transportation-System
 智慧交通系统
 自己建立数据库
+
 cd koa2 npm run dev
 cd vue2 npm run dev
 
