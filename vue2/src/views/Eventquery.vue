@@ -273,7 +273,6 @@ import Heatmap from 'ol/layer/Heatmap';
         this.map.on("click", (evt)=> {
                 var feature = _that.map.forEachFeatureAtPixel(evt.pixel, function (feature, layer_search) { return feature; });
                 try{
-                    console.log('123')
                     let code_1 = feature.values_.info.AttValue[0];
                     let type_1 = feature.values_.info.AttValue[1];
                     let level_1 = feature.values_.info.AttValue[2];
@@ -328,8 +327,13 @@ import Heatmap from 'ol/layer/Heatmap';
                         <td>驾驶员：</td>
                             <td>${name_1}</td>
         </tr>
+        <tr class = "table-row">
+                        <td><button id='btn-modify' class='btn btn-primary btn-sm mr5'>修改</button></td>
+                            <td><button id='btn-cancel' class='btn btn-primary btn-sm mr5 '>删除</button></td>
+        </tr>
                 </table>               
                ` 
+               $('#button.btn-cancel').css({ "border":"1px solid red"});
                if (feature.values_.info.AttValue) {
                 console.log('true')
                     overlay.setPosition(evt.coordinate);
@@ -343,18 +347,12 @@ import Heatmap from 'ol/layer/Heatmap';
                 selectElement_1.change(function() {
                     var selectedValue_1 = $(this).val();
                     state_1 = selectedValue_1;
-                    console.log(state_1);
-                
                 });
 
                
-                } catch (error) {}     
-                
-                
-
+                } catch (error) {}                  
         })
         closer.onclick = () => {
-                console.log('123')
                 overlay.setPosition(undefined);
                 closer.blur();
                 return false;
@@ -642,5 +640,8 @@ import Heatmap from 'ol/layer/Heatmap';
 .ol-popup-closer_1:after {
     content: "✖";
     
+}
+.table-row{
+    margin-top:10px
 }
 </style>

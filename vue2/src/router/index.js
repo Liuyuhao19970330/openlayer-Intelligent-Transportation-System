@@ -8,7 +8,7 @@ import Delete from '../components/delete.vue'
 
 
 Vue.use(VueRouter)
-
+//可以换成嵌套路由
 const routes = [
   {
     path: '/api/login',

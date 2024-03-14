@@ -182,19 +182,17 @@ export default {
                 
                  //把 overlay 显示到指定的 x,y坐标
         })
-        var closer = document.getElementById("popup-closer_1");
             closer.onclick = () => {
                 overlay.setPosition(undefined);
                 closer.blur();
-                return false;
+                return false;    
             }
         } catch(error){
-
+  
     };
-        this.is_addLayer = true
+        this.is_addLayer = true  //忘了这个参数是干嘛的了??
            
     },
-
     cleanPopup(){
         this.map.removeLayer(this.layer_search);
         this.is_addLayer = false

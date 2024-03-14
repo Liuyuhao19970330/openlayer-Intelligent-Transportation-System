@@ -14,9 +14,6 @@ export const bus = new Vue();
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 Vue.use(VueAxios, axios);
-Vue.config.productionTip = false;
-
-
 // 注册全局的请求方法
 Vue.prototype.$get = get;
 Vue.prototype.$post = post;
